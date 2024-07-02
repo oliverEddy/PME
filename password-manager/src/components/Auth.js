@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { registerWithEmailAndPassword, loginWithEmailAndPassword, logout } from '../auth';
 import { auth } from '../firebase';
 import { useNavigate } from 'react-router-dom';
+import { signInWithGoogle } from '../auth'; // Import Google Sign-In function
 
 const Auth = () => {
   const [email, setEmail] = useState('');
@@ -18,6 +19,13 @@ const Auth = () => {
 
   const handleLogin = async () => {
     await loginWithEmailAndPassword(email, password);
+    if (auth.currentUser) {
+      navigate('/home');
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    await signInWithGoogle();
     if (auth.currentUser) {
       navigate('/home');
     }
@@ -45,6 +53,7 @@ const Auth = () => {
       />
       <button onClick={handleRegister}>Sign Up</button>
       <button onClick={handleLogin}>Login</button>
+      <button onClick={handleGoogleSignIn}>Sign in with Google</button>
       <button onClick={handleLogout}>Logout</button>
     </div>
   );
