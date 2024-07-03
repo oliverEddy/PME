@@ -17,9 +17,12 @@ const Home = () => {
 
   return (
     <div>
-      <h2>Welcome to the Home Page</h2>
-      <p>You are now logged in.</p>
-      <button onClick={handleLogout}>Logout</button>
+    
+      <div>
+        <h2>Welcome to the Home Page</h2>
+        <p>You are now logged in.</p>
+        <button onClick={handleLogout}>Logout</button>
+      </div>
     </div>
   );
 };
