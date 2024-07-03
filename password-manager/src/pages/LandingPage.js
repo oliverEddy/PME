@@ -1,5 +1,5 @@
 // src/pages/LandingPage.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { registerWithEmailAndPassword, loginWithEmailAndPassword, signInWithGoogle } from '../auth';
 import { auth } from '../firebase';
 import { useNavigate } from 'react-router-dom';
@@ -9,8 +9,19 @@ const LandingPage = () => {
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        navigate('/home');
+      }
+    });
+
+    return () => unsubscribe();
+  }, [navigate]);
+
   const handleRegister = async () => {
     await registerWithEmailAndPassword(email, password);
+    // navigate to home if user is authenticated
     if (auth.currentUser) {
       navigate('/home');
     }
@@ -18,6 +29,7 @@ const LandingPage = () => {
 
   const handleLogin = async () => {
     await loginWithEmailAndPassword(email, password);
+    // navigate to home if user is authenticated
     if (auth.currentUser) {
       navigate('/home');
     }
@@ -25,16 +37,11 @@ const LandingPage = () => {
 
   const handleGoogleSignIn = async () => {
     await signInWithGoogle();
+    // navigate to home if user is authenticated
     if (auth.currentUser) {
       navigate('/home');
     }
   };
-
-  // Assuming you want to redirect to /home if user is already authenticated
-  if (auth.currentUser) {
-    navigate('/home');
-    return null; // Redirecting, so no need to render anything
-  }
 
   return (
     <div>
