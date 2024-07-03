@@ -1,11 +1,10 @@
-// src/components/Auth.js
+// src/pages/LandingPage.js
 import React, { useState } from 'react';
-import { registerWithEmailAndPassword, loginWithEmailAndPassword, logout } from '../auth';
+import { registerWithEmailAndPassword, loginWithEmailAndPassword, signInWithGoogle } from '../auth';
 import { auth } from '../firebase';
 import { useNavigate } from 'react-router-dom';
-import { signInWithGoogle } from '../auth'; // Import Google Sign-In function
 
-const Auth = () => {
+const LandingPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
@@ -31,14 +30,15 @@ const Auth = () => {
     }
   };
 
-  const handleLogout = async () => {
-    await logout();
-    navigate('/');
-  };
+  // Assuming you want to redirect to /home if user is already authenticated
+  if (auth.currentUser) {
+    navigate('/home');
+    return null; // Redirecting, so no need to render anything
+  }
 
   return (
     <div>
-      <h2>Authentication</h2>
+      <h2>Landing Page</h2>
       <input
         type="email"
         value={email}
@@ -54,9 +54,8 @@ const Auth = () => {
       <button onClick={handleRegister}>Sign Up</button>
       <button onClick={handleLogin}>Login</button>
       <button onClick={handleGoogleSignIn}>Sign in with Google</button>
-      <button onClick={handleLogout}>Logout</button>
     </div>
   );
 };
 
-export default Auth;
+export default LandingPage;
