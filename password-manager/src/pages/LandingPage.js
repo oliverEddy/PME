@@ -1,17 +1,27 @@
-// src/components/Auth.js
-import React, { useState } from 'react';
-import { registerWithEmailAndPassword, loginWithEmailAndPassword, logout } from '../auth';
+// src/pages/LandingPage.js
+import React, { useState, useEffect } from 'react';
+import { registerWithEmailAndPassword, loginWithEmailAndPassword, signInWithGoogle } from '../auth';
 import { auth } from '../firebase';
 import { useNavigate } from 'react-router-dom';
-import { signInWithGoogle } from '../auth'; // Import Google Sign-In function
 
-const Auth = () => {
+const LandingPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        navigate('/home');
+      }
+    });
+
+    return () => unsubscribe();
+  }, [navigate]);
+
   const handleRegister = async () => {
     await registerWithEmailAndPassword(email, password);
+    // navigate to home if user is authenticated
     if (auth.currentUser) {
       navigate('/home');
     }
@@ -19,6 +29,7 @@ const Auth = () => {
 
   const handleLogin = async () => {
     await loginWithEmailAndPassword(email, password);
+    // navigate to home if user is authenticated
     if (auth.currentUser) {
       navigate('/home');
     }
@@ -26,19 +37,15 @@ const Auth = () => {
 
   const handleGoogleSignIn = async () => {
     await signInWithGoogle();
+    // navigate to home if user is authenticated
     if (auth.currentUser) {
       navigate('/home');
     }
   };
 
-  const handleLogout = async () => {
-    await logout();
-    navigate('/');
-  };
-
   return (
     <div>
-      <h2>Authentication</h2>
+      <h2>Landing Page</h2>
       <input
         type="email"
         value={email}
@@ -54,9 +61,8 @@ const Auth = () => {
       <button onClick={handleRegister}>Sign Up</button>
       <button onClick={handleLogin}>Login</button>
       <button onClick={handleGoogleSignIn}>Sign in with Google</button>
-      <button onClick={handleLogout}>Logout</button>
     </div>
   );
 };
 
-export default Auth;
+export default LandingPage;

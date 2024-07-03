@@ -2,7 +2,7 @@
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getFirestore } from "firebase/firestore";
-import { getAuth, GoogleAuthProvider } from "firebase/auth"; // Add GoogleAuthProvider
+import { getAuth, GoogleAuthProvider } from "firebase/auth";
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_API_KEY,
@@ -14,10 +14,13 @@ const firebaseConfig = {
   measurementId: process.env.REACT_APP_MEASUREMENT_ID
 };
 
+// Initialize Firebase app
 const app = initializeApp(firebaseConfig);
+
+// Initialize Firebase services
 const analytics = getAnalytics(app);
 const firestore = getFirestore(app);
 const auth = getAuth(app);
 const googleProvider = new GoogleAuthProvider(); // Initialize GoogleAuthProvider
 
-export { analytics, firestore, auth, googleProvider };
+export { app, analytics, firestore, auth, googleProvider };
