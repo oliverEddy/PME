@@ -11,12 +11,23 @@ const Passwords = () => {
   const [password, setPassword] = useState('');
   const [editMode, setEditMode] = useState(false);
   const [editPasswordId, setEditPasswordId] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchPasswords = async () => {
-      if (auth.currentUser) {
-        const fetchedPasswords = await getPasswordsByUser(auth.currentUser.uid);
-        setPasswords(fetchedPasswords);
+      setLoading(true);
+      setError(null);
+      try {
+        if (auth.currentUser) {
+          const fetchedPasswords = await getPasswordsByUser(auth.currentUser.uid);
+          setPasswords(fetchedPasswords);
+        }
+      } catch (error) {
+        console.error('Error fetching passwords:', error);
+        setError('Failed to fetch passwords. Please try again later.');
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -25,39 +36,57 @@ const Passwords = () => {
 
   const handleAddPassword = async (e) => {
     e.preventDefault();
-    if (editMode) {
-      // Update existing password
-      await updatePassword(editPasswordId, { title, url, email, username, password });
-      setEditMode(false);
-      setEditPasswordId('');
-    } else {
-      // Add new password
-      const passwordData = {
-        title,
-        url,
-        email,
-        username,
-        password,
-        uid: auth.currentUser.uid,
-      };
-      await addPassword(passwordData);
+    if (!title || !password) {
+      setError('Title and Password are required.');
+      return;
     }
-    setTitle('');
-    setUrl('');
-    setEmail('');
-    setUsername('');
-    setPassword('');
-    const fetchedPasswords = await getPasswordsByUser(auth.currentUser.uid);
-    setPasswords(fetchedPasswords);
+    setLoading(true);
+    setError(null);
+    try {
+      if (editMode) {
+        // Update existing password
+        await updatePassword(editPasswordId, { title, url, email, username, password });
+        setEditMode(false);
+        setEditPasswordId('');
+      } else {
+        // Add new password
+        const passwordData = {
+          title,
+          url,
+          email,
+          username,
+          password,
+          uid: auth.currentUser.uid,
+        };
+        await addPassword(passwordData);
+      }
+      setTitle('');
+      setUrl('');
+      setEmail('');
+      setUsername('');
+      setPassword('');
+      const fetchedPasswords = await getPasswordsByUser(auth.currentUser.uid);
+      setPasswords(fetchedPasswords);
+    } catch (error) {
+      console.error('Error adding/editing password:', error);
+      setError('Failed to add/edit password. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleDeletePassword = async (passwordId) => {
+    setLoading(true);
+    setError(null);
     try {
       await deletePassword(passwordId);
       const updatedPasswords = passwords.filter(pw => pw.id !== passwordId);
       setPasswords(updatedPasswords);
     } catch (error) {
       console.error('Error deleting password:', error);
+      setError('Failed to delete password. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -74,6 +103,8 @@ const Passwords = () => {
   return (
     <div>
       <h2>Passwords</h2>
+      {loading && <p>Loading...</p>}
+      {error && <p style={{ color: 'red' }}>{error}</p>}
       <form onSubmit={handleAddPassword}>
         <input
           type="text"
