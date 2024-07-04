@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { auth } from '../firebase';
-import { addPassword, getPasswordsByUser } from '../passwordService';
+import { addPassword, getPasswordsByUser, deletePassword } from '../passwordService';
 
 const Passwords = () => {
   const [passwords, setPasswords] = useState([]);
@@ -39,6 +39,16 @@ const Passwords = () => {
     setPassword('');
     const fetchedPasswords = await getPasswordsByUser(auth.currentUser.uid);
     setPasswords(fetchedPasswords);
+  };
+
+  const handleDeletePassword = async (passwordId) => {
+    try {
+      await deletePassword(passwordId);
+      const updatedPasswords = passwords.filter(pw => pw.id !== passwordId);
+      setPasswords(updatedPasswords);
+    } catch (error) {
+      console.error('Error deleting password:', error);
+    }
   };
 
   return (
@@ -83,6 +93,7 @@ const Passwords = () => {
         {passwords.map((pw) => (
           <li key={pw.id}>
             <strong>{pw.title}</strong> - {pw.url} - {pw.email} - {pw.username} - {pw.password}
+            <button onClick={() => handleDeletePassword(pw.id)}>Delete</button>
           </li>
         ))}
       </ul>
