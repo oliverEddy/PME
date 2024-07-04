@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { auth } from '../firebase';
 import { addPassword, getPasswordsByUser, deletePassword, updatePassword } from '../passwordService';
+import GeneratePassword from '../components/GeneratePassword'; // Import the password generator component
 
 const Passwords = () => {
   const [passwords, setPasswords] = useState([]);
@@ -138,6 +139,7 @@ const Passwords = () => {
           placeholder="Password"
           required
         />
+        <GeneratePassword setPassword={setPassword} /> {/* Pass setPassword function to GeneratePassword */}
         <button type="submit">{editMode ? 'Update Password' : 'Add Password'}</button>
       </form>
       <ul>
