@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { auth } from '../firebase';
-import { addPassword, getPasswordsByUser, deletePassword } from '../passwordService';
+import { addPassword, getPasswordsByUser, deletePassword, updatePassword } from '../passwordService';
 
 const Passwords = () => {
   const [passwords, setPasswords] = useState([]);
@@ -9,6 +9,8 @@ const Passwords = () => {
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [editMode, setEditMode] = useState(false);
+  const [editPasswordId, setEditPasswordId] = useState('');
 
   useEffect(() => {
     const fetchPasswords = async () => {
@@ -23,15 +25,23 @@ const Passwords = () => {
 
   const handleAddPassword = async (e) => {
     e.preventDefault();
-    const passwordData = {
-      title,
-      url,
-      email,
-      username,
-      password,
-      uid: auth.currentUser.uid,
-    };
-    await addPassword(passwordData);
+    if (editMode) {
+      // Update existing password
+      await updatePassword(editPasswordId, { title, url, email, username, password });
+      setEditMode(false);
+      setEditPasswordId('');
+    } else {
+      // Add new password
+      const passwordData = {
+        title,
+        url,
+        email,
+        username,
+        password,
+        uid: auth.currentUser.uid,
+      };
+      await addPassword(passwordData);
+    }
     setTitle('');
     setUrl('');
     setEmail('');
@@ -49,6 +59,16 @@ const Passwords = () => {
     } catch (error) {
       console.error('Error deleting password:', error);
     }
+  };
+
+  const handleEditPassword = (pw) => {
+    setTitle(pw.title);
+    setUrl(pw.url || '');
+    setEmail(pw.email || '');
+    setUsername(pw.username || '');
+    setPassword(pw.password);
+    setEditMode(true);
+    setEditPasswordId(pw.id);
   };
 
   return (
@@ -87,12 +107,13 @@ const Passwords = () => {
           placeholder="Password"
           required
         />
-        <button type="submit">Add Password</button>
+        <button type="submit">{editMode ? 'Update Password' : 'Add Password'}</button>
       </form>
       <ul>
         {passwords.map((pw) => (
           <li key={pw.id}>
             <strong>{pw.title}</strong> - {pw.url} - {pw.email} - {pw.username} - {pw.password}
+            <button onClick={() => handleEditPassword(pw)}>Edit</button>
             <button onClick={() => handleDeletePassword(pw.id)}>Delete</button>
           </li>
         ))}

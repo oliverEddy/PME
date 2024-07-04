@@ -1,5 +1,5 @@
 import { firestore } from './firebase'; // Import firestore from firebase.js
-import { collection, addDoc, query, where, getDocs, doc, deleteDoc } from 'firebase/firestore';
+import { collection, addDoc, query, where, getDocs, doc, deleteDoc, updateDoc } from 'firebase/firestore';
 
 // Function to add a password document to Firestore
 export const addPassword = async (passwordData) => {
@@ -32,5 +32,17 @@ export const deletePassword = async (passwordId) => {
   } catch (error) {
     console.error('Error deleting document: ', error);
     throw new Error('Failed to delete password document');
+  }
+};
+
+// Function to update a password document in Firestore
+export const updatePassword = async (passwordId, updatedPasswordData) => {
+  try {
+    const passwordRef = doc(firestore, 'passwords', passwordId);
+    await updateDoc(passwordRef, updatedPasswordData);
+    console.log('Document successfully updated!');
+  } catch (error) {
+    console.error('Error updating document: ', error);
+    throw new Error('Failed to update password document');
   }
 };
