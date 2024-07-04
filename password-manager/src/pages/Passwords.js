@@ -14,6 +14,7 @@ const Passwords = () => {
   const [editPasswordId, setEditPasswordId] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [showPassword, setShowPassword] = useState(false); // State to manage password visibility
 
   useEffect(() => {
     const fetchPasswords = async () => {
@@ -101,6 +102,10 @@ const Passwords = () => {
     setEditPasswordId(pw.id);
   };
 
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword); // Toggle the state to show or hide the password
+  };
+
   return (
     <div>
       <h2>Passwords</h2>
@@ -127,18 +132,15 @@ const Passwords = () => {
           placeholder="Email"
         />
         <input
-          type="text"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          placeholder="Username"
-        />
-        <input
-          type="password"
+          type={showPassword ? 'text' : 'password'} // Toggle input type based on showPassword state
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           placeholder="Password"
           required
         />
+        <button type="button" onClick={togglePasswordVisibility}>
+          {showPassword ? 'Hide Password' : 'Show Password'}
+        </button>
         <GeneratePassword setPassword={setPassword} /> {/* Pass setPassword function to GeneratePassword */}
         <button type="submit">{editMode ? 'Update Password' : 'Add Password'}</button>
       </form>
