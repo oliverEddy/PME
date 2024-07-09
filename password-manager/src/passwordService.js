@@ -23,14 +23,19 @@ export const addPassword = async (passwordData) => {
 
 // Function to get passwords for a specific user from Firestore
 export const getPasswordsByUser = async (uid) => {
-  const q = query(collection(firestore, 'passwords'), where('uid', '==', uid));
-  const querySnapshot = await getDocs(q);
-  const passwords = [];
-  querySnapshot.forEach((doc) => {
-    const data = doc.data();
-    passwords.push({ id: doc.id, ...data });
-  });
-  return passwords;
+  try {
+    const q = query(collection(firestore, 'passwords'), where('uid', '==', uid));
+    const querySnapshot = await getDocs(q);
+    const passwords = [];
+    querySnapshot.forEach((doc) => {
+      const data = doc.data();
+      passwords.push({ id: doc.id, ...data });
+    });
+    return passwords;
+  } catch (error) {
+    console.error('Error fetching passwords: ', error);
+    throw new Error('Failed to fetch passwords');
+  }
 };
 
 // Function to delete a password document from Firestore
