@@ -1,4 +1,3 @@
-import argon2 from 'argon2';
 import { firestore } from './firebase'; // Import firestore from firebase.js
 import { collection, addDoc, query, where, getDocs, doc, deleteDoc, updateDoc } from 'firebase/firestore';
 
@@ -6,11 +5,10 @@ import { collection, addDoc, query, where, getDocs, doc, deleteDoc, updateDoc } 
 export const addPassword = async (passwordData) => {
   try {
     const { password, ...otherData } = passwordData;
-    const hashedPassword = await argon2.hash(password); // Hash the password
 
     const docRef = await addDoc(collection(firestore, 'passwords'), {
       ...otherData,
-      hashedPassword, // Store the hashed password
+      password, // Store the plain password (not recommended for production)
     });
 
     console.log('Document written with ID: ', docRef.id);
@@ -56,8 +54,7 @@ export const updatePassword = async (passwordId, updatedPasswordData) => {
     const updatedData = { ...otherData };
 
     if (password) {
-      const hashedPassword = await argon2.hash(password); // Hash the updated password
-      updatedData.hashedPassword = hashedPassword; // Update hashed password in data
+      updatedData.password = password; // Update plain password (not recommended for production)
     }
 
     const passwordRef = doc(firestore, 'passwords', passwordId);
