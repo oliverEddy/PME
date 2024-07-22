@@ -1,20 +1,23 @@
 import { firestore } from './firebase'; // Import firestore from firebase.js
 import { collection, addDoc, query, where, getDocs, doc, deleteDoc, updateDoc } from 'firebase/firestore';
+import { encryptPassword, decryptPassword } from './services/encryptionService'; // Import encryption functions
 
 // Function to add a password document to Firestore
 export const addPassword = async (passwordData) => {
   try {
     const { password, ...otherData } = passwordData;
+    const encryptedPassword = encryptPassword(password); // Encrypt the password
+    console.log('Encrypted Password:', encryptedPassword); // Log encrypted password
 
     const docRef = await addDoc(collection(firestore, 'passwords'), {
       ...otherData,
-      password, // Store the plain password (not recommended for production)
+      password: encryptedPassword, // Store the encrypted password
     });
 
-    console.log('Document written with ID: ', docRef.id);
+    console.log('Document written with ID:', docRef.id);
     return docRef.id; // Return the document ID for reference if needed
   } catch (error) {
-    console.error('Error adding document: ', error);
+    console.error('Error adding document:', error);
     throw new Error('Failed to add password document');
   }
 };
@@ -27,11 +30,13 @@ export const getPasswordsByUser = async (uid) => {
     const passwords = [];
     querySnapshot.forEach((doc) => {
       const data = doc.data();
-      passwords.push({ id: doc.id, ...data });
+      const decryptedPassword = decryptPassword(data.password); // Decrypt the password
+      passwords.push({ id: doc.id, ...data, password: decryptedPassword });
+      console.log('Decrypted Password:', decryptedPassword); // Log decrypted password
     });
     return passwords;
   } catch (error) {
-    console.error('Error fetching passwords: ', error);
+    console.error('Error fetching passwords:', error);
     throw new Error('Failed to fetch passwords');
   }
 };
@@ -42,7 +47,7 @@ export const deletePassword = async (passwordId) => {
     await deleteDoc(doc(firestore, 'passwords', passwordId));
     console.log('Document successfully deleted!');
   } catch (error) {
-    console.error('Error deleting document: ', error);
+    console.error('Error deleting document:', error);
     throw new Error('Failed to delete password document');
   }
 };
@@ -54,7 +59,8 @@ export const updatePassword = async (passwordId, updatedPasswordData) => {
     const updatedData = { ...otherData };
 
     if (password) {
-      updatedData.password = password; // Update plain password (not recommended for production)
+      const encryptedPassword = encryptPassword(password); // Encrypt the new password
+      updatedData.password = encryptedPassword;
     }
 
     const passwordRef = doc(firestore, 'passwords', passwordId);
@@ -62,7 +68,7 @@ export const updatePassword = async (passwordId, updatedPasswordData) => {
 
     console.log('Document successfully updated!');
   } catch (error) {
-    console.error('Error updating document: ', error);
+    console.error('Error updating document:', error);
     throw new Error('Failed to update password document');
   }
 };
