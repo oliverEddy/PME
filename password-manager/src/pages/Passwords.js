@@ -15,6 +15,8 @@ const Passwords = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [showPassword, setShowPassword] = useState(false); // State to manage password visibility
+  const [passwordToDelete, setPasswordToDelete] = useState(null); // State to manage password to delete
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false); // State to manage delete confirmation dialog
 
   useEffect(() => {
     const fetchPasswords = async () => {
@@ -77,19 +79,25 @@ const Passwords = () => {
     }
   };
 
-  const handleDeletePassword = async (passwordId) => {
+  const handleDeletePassword = async () => {
     setLoading(true);
     setError(null);
     try {
-      await deletePassword(passwordId);
-      const updatedPasswords = passwords.filter(pw => pw.id !== passwordId);
+      await deletePassword(passwordToDelete);
+      const updatedPasswords = passwords.filter(pw => pw.id !== passwordToDelete);
       setPasswords(updatedPasswords);
+      setShowDeleteConfirmation(false); // Hide confirmation dialog
     } catch (error) {
       console.error('Error deleting password:', error);
       setError('Failed to delete password. Please try again.');
     } finally {
       setLoading(false);
     }
+  };
+
+  const confirmDeletePassword = (passwordId) => {
+    setPasswordToDelete(passwordId);
+    setShowDeleteConfirmation(true);
   };
 
   const handleEditPassword = (pw) => {
@@ -149,10 +157,18 @@ const Passwords = () => {
           <li key={pw.id}>
             <strong>{pw.title}</strong> - {pw.url} - {pw.email} - {pw.username} - {pw.password}
             <button onClick={() => handleEditPassword(pw)}>Edit</button>
-            <button onClick={() => handleDeletePassword(pw.id)}>Delete</button>
+            <button onClick={() => confirmDeletePassword(pw.id)}>Delete</button>
           </li>
         ))}
       </ul>
+
+      {showDeleteConfirmation && (
+        <div className="delete-confirmation">
+          <p>Are you sure you want to delete this password?</p>
+          <button onClick={handleDeletePassword}>Yes</button>
+          <button onClick={() => setShowDeleteConfirmation(false)}>No</button>
+        </div>
+      )}
     </div>
   );
 };
