@@ -46,9 +46,17 @@ const LandingPage = () => {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-background text-text">
-      <h1 className="text-4xl font-bold mb-8">
-        <InteractiveText originalText="Welcome to Passwords Made Easy" />
-      </h1>
+      <div className="text-center mb-8">
+        <h1 className="text-4xl font-bold">
+          <InteractiveText originalText="PASSWORDS" className="inline-block w-[7ch]" />
+        </h1>
+        <h1 className="text-4xl font-bold mt-2">
+          <InteractiveText originalText="MADE" className="inline-block w-[7ch]" />
+        </h1>
+        <h1 className="text-4xl font-bold mt-2">
+          <InteractiveText originalText="EASY" className="inline-block w-[7ch]" />
+        </h1>
+      </div>
       <div className="w-full max-w-md space-y-4">
         <input
           type="email"

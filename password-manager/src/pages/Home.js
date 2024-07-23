@@ -16,12 +16,18 @@ const Home = () => {
   };
 
   return (
-    <div>
-    
-      <div>
-        <h2>Welcome to the Home Page</h2>
-        <p>You are now logged in.</p>
-        <button onClick={handleLogout}>Logout</button>
+    <div className="min-h-screen flex flex-col items-center justify-center bg-background text-text">
+      <div className="text-center mb-8">
+        <h1 className="text-4xl font-bold mb-4">
+          Welcome to <span className="text-primary">Passwords Made Easy</span>
+        </h1>
+        <p className="text-xl mb-6">You are now logged in.</p>
+        <button
+          onClick={handleLogout}
+          className="py-3 px-6 bg-secondary text-white rounded-md hover:bg-secondary-dark"
+        >
+          Logout
+        </button>
       </div>
     </div>
   );
