@@ -1,33 +1,34 @@
-// src/components/Home.js
-import React from 'react';
-import { logout } from '../auth'; // Import logout function
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { auth } from '../firebase';
 
 const Home = () => {
-  const navigate = useNavigate();
+  const [user, setUser] = useState(null);
 
-  const handleLogout = async () => {
-    try {
-      await logout(); // Call logout function from auth.js
-      navigate('/'); // Redirect to landing page after logout
-    } catch (error) {
-      console.error('Error logging out:', error);
-    }
-  };
+  useEffect(() => {
+    const fetchUserData = () => {
+      const currentUser = auth.currentUser;
+      if (currentUser) {
+        setUser(currentUser);
+      }
+    };
+
+    fetchUserData();
+  }, []);
+
+  if (!user) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-background text-text">
+        <p className="text-xl">Loading user information...</p>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-background text-text">
+    <div className="min-h-screen flex flex-col items-center bg-background text-text p-6">
       <div className="text-center mb-8">
         <h1 className="text-4xl font-bold mb-4">
-          Welcome to <span className="text-primary">Passwords Made Easy</span>
+          Welcome to <span className="text-primary">Passwords Made Easy</span>, {user.displayName}
         </h1>
-        <p className="text-xl mb-6">You are now logged in.</p>
-        <button
-          onClick={handleLogout}
-          className="py-3 px-6 bg-secondary text-white rounded-md hover:bg-secondary-dark"
-        >
-          Logout
-        </button>
       </div>
     </div>
   );
