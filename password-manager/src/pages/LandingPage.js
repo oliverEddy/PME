@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { registerWithEmailAndPassword, loginWithEmailAndPassword, signInWithGoogle } from '../auth';
 import { auth } from '../firebase';
 import { useNavigate } from 'react-router-dom';
+import InteractiveText from '../components/InteractiveText';
 
 const LandingPage = () => {
   const [email, setEmail] = useState('');
@@ -44,23 +45,52 @@ const LandingPage = () => {
   };
 
   return (
-    <div>
-      <h2>Landing Page</h2>
-      <input
-        type="email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        placeholder="Email"
-      />
-      <input
-        type="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        placeholder="Password"
-      />
-      <button onClick={handleRegister}>Sign Up</button>
-      <button onClick={handleLogin}>Login</button>
-      <button onClick={handleGoogleSignIn}>Sign in with Google</button>
+    <div className="min-h-screen flex flex-col items-center justify-center bg-background text-text">
+      <div className="text-center mb-8">
+        <h1 className="text-4xl font-bold">
+          <InteractiveText originalText="PASSWORDS" className="inline-block w-[7ch]" />
+        </h1>
+        <h1 className="text-4xl font-bold mt-2">
+          <InteractiveText originalText="MADE" className="inline-block w-[7ch]" />
+        </h1>
+        <h1 className="text-4xl font-bold mt-2">
+          <InteractiveText originalText="EASY" className="inline-block w-[7ch]" />
+        </h1>
+      </div>
+      <div className="w-full max-w-md space-y-4">
+        <input
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="Email"
+          className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+        />
+        <input
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="Password"
+          className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+        />
+        <button
+          onClick={handleRegister}
+          className="w-full py-3 bg-primary text-white rounded-md hover:bg-primary-dark"
+        >
+          Sign Up
+        </button>
+        <button
+          onClick={handleLogin}
+          className="w-full py-3 bg-secondary text-white rounded-md hover:bg-secondary-dark"
+        >
+          Login
+        </button>
+        <button
+          onClick={handleGoogleSignIn}
+          className="w-full py-3 bg-accent text-white rounded-md hover:bg-accent-dark"
+        >
+          Sign in with Google
+        </button>
+      </div>
     </div>
   );
 };
