@@ -32,11 +32,6 @@ const NavBar = () => {
             </button>
           </li>
           <li>
-            <Link to="/" className="hover:text-accent">
-              Home
-            </Link>
-          </li>
-          <li>
             <Link to="/passwords" className="hover:text-accent">
               Passwords
             </Link>

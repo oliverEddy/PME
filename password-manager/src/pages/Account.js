@@ -33,9 +33,9 @@ const Account = () => {
     <div className="min-h-screen flex flex-col items-center bg-background text-text p-6">
       <h2 className="text-4xl font-bold mb-6">Account Page</h2>
       <UserProfile user={user} />
-      <div className="mt-4 space-y-2">
+      <div className="mt-8 space-y-6">
         <button
-          className="w-full py-2 px-4 bg-primary text-white rounded-md hover:bg-primary-dark"
+          className="py-3 px-8 bg-primary text-white rounded-md text-lg hover:bg-primary-dark"
           onClick={handleChangePassword}
         >
           Change Password
