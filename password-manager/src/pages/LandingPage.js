@@ -1,13 +1,10 @@
-// src/pages/LandingPage.js
-import React, { useState, useEffect } from 'react';
-import { registerWithEmailAndPassword, loginWithEmailAndPassword, signInWithGoogle } from '../auth';
+import React, { useEffect } from 'react';
+import { signInWithGoogle } from '../auth';
 import { auth } from '../firebase';
 import { useNavigate } from 'react-router-dom';
 import InteractiveText from '../components/InteractiveText';
 
 const LandingPage = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -20,77 +17,37 @@ const LandingPage = () => {
     return () => unsubscribe();
   }, [navigate]);
 
-  const handleRegister = async () => {
-    await registerWithEmailAndPassword(email, password);
-    // navigate to home if user is authenticated
-    if (auth.currentUser) {
-      navigate('/home');
-    }
-  };
-
-  const handleLogin = async () => {
-    await loginWithEmailAndPassword(email, password);
-    // navigate to home if user is authenticated
-    if (auth.currentUser) {
-      navigate('/home');
-    }
-  };
-
   const handleGoogleSignIn = async () => {
-    await signInWithGoogle();
-    // navigate to home if user is authenticated
-    if (auth.currentUser) {
-      navigate('/home');
+    try {
+      await signInWithGoogle();
+      if (auth.currentUser) {
+        navigate('/home');
+      }
+    } catch (error) {
+      console.error("Error signing in with Google:", error);
     }
   };
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-background text-text">
-      <div className="text-center mb-8">
-        <h1 className="text-4xl font-bold">
-          <InteractiveText originalText="PASSWORDS" className="inline-block w-[7ch]" />
-        </h1>
-        <h1 className="text-4xl font-bold mt-2">
-          <InteractiveText originalText="MADE" className="inline-block w-[7ch]" />
-        </h1>
-        <h1 className="text-4xl font-bold mt-2">
-          <InteractiveText originalText="EASY" className="inline-block w-[7ch]" />
-        </h1>
-      </div>
-      <div className="w-full max-w-md space-y-4">
-        <input
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="Email"
-          className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
-        />
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder="Password"
-          className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
-        />
-        <button
-          onClick={handleRegister}
-          className="w-full py-3 bg-primary text-white rounded-md hover:bg-primary-dark"
-        >
-          Sign Up
-        </button>
-        <button
-          onClick={handleLogin}
-          className="w-full py-3 bg-secondary text-white rounded-md hover:bg-secondary-dark"
-        >
-          Login
-        </button>
-        <button
-          onClick={handleGoogleSignIn}
-          className="w-full py-3 bg-accent text-white rounded-md hover:bg-accent-dark"
-        >
-          Sign in with Google
-        </button>
-      </div>
+      {/* Title */}
+      <h1 className="text-5xl font-bold mb-4">Welcome to</h1>
+      <h1 className="text-5xl font-bold mb-6">
+        <InteractiveText originalText="Passwords Made Easy" className="inline-block w-[20ch]" />
+      </h1>
+      
+      {/* Welcome Message */}
+      <p className="text-xl text-center mb-8">
+        Sign in to get started.
+      </p>
+
+      {/* Google Sign-In Button */}
+      <button
+        onClick={handleGoogleSignIn}
+        className="py-3 px-6 bg-accent text-white rounded-md hover:bg-accent-dark"
+      >
+        Sign in with Google
+      </button>
     </div>
   );
 };
