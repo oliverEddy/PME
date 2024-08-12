@@ -7,6 +7,7 @@ import DeleteConfirmation from '../components/DeleteConfirmation';
 
 const Passwords = () => {
   const [passwords, setPasswords] = useState([]);
+  const [showForm, setShowForm] = useState(false); // State for showing the form
   const [title, setTitle] = useState('');
   const [url, setUrl] = useState('');
   const [email, setEmail] = useState('');
@@ -16,9 +17,9 @@ const Passwords = () => {
   const [editPasswordId, setEditPasswordId] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [showPassword, setShowPassword] = useState(false); // State to manage password visibility
-  const [passwordToDelete, setPasswordToDelete] = useState(null); // State to manage password to delete
-  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false); // State to manage delete confirmation dialog
+  const [showPassword, setShowPassword] = useState(false); // Manage password visibility
+  const [passwordToDelete, setPasswordToDelete] = useState(null); // Manage password to delete
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false); // Manage delete confirmation dialog
 
   useEffect(() => {
     const fetchPasswords = async () => {
@@ -101,7 +102,24 @@ const Passwords = () => {
       setError('Failed to add/edit password. Please try again.');
     } finally {
       setLoading(false);
+      setShowForm(false); // Close form after submission
     }
+  };
+
+  const handleEditPassword = (pw) => {
+    setTitle(pw.title);
+    setUrl(pw.url || '');
+    setEmail(pw.email || '');
+    setUsername(pw.username || '');
+    setPassword(pw.password);
+    setEditMode(true);
+    setEditPasswordId(pw.id);
+    setShowForm(true); // Open the form with the selected password for editing
+  };
+
+  const confirmDeletePassword = (passwordId) => {
+    setPasswordToDelete(passwordId);
+    setShowDeleteConfirmation(true); // Show the confirmation dialog
   };
 
   const handleDeletePassword = async () => {
@@ -120,21 +138,6 @@ const Passwords = () => {
     }
   };
 
-  const confirmDeletePassword = (passwordId) => {
-    setPasswordToDelete(passwordId);
-    setShowDeleteConfirmation(true);
-  };
-
-  const handleEditPassword = (pw) => {
-    setTitle(pw.title);
-    setUrl(pw.url || '');
-    setEmail(pw.email || '');
-    setUsername(pw.username || '');
-    setPassword(pw.password);
-    setEditMode(true);
-    setEditPasswordId(pw.id);
-  };
-
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword); // Toggle the state to show or hide the password
   };
@@ -142,21 +145,14 @@ const Passwords = () => {
   return (
     <div className="min-h-screen flex flex-col items-center bg-background text-text p-6">
       <h2 className="text-4xl font-bold mb-6">Passwords</h2>
+      <button
+        onClick={() => setShowForm(true)}
+        className="mb-4 py-2 px-4 bg-primary text-white rounded-full hover:bg-primary-dark"
+      >
+        + Add Password
+      </button>
       {loading && <p>Loading...</p>}
       {error && <p className="text-red-500">{error}</p>}
-      <PasswordForm
-        title={title}
-        url={url}
-        email={email}
-        username={username}
-        password={password}
-        showPassword={showPassword}
-        editMode={editMode}
-        handleInputChange={handleInputChange}
-        handleAddPassword={handleAddPassword}
-        togglePasswordVisibility={togglePasswordVisibility}
-        setPassword={setPassword}
-      />
       <div className="w-full max-w-4xl mt-8">
         <PasswordList
           passwords={passwords}
@@ -170,6 +166,32 @@ const Passwords = () => {
           handleDeletePassword={handleDeletePassword}
           setShowDeleteConfirmation={setShowDeleteConfirmation}
         />
+      )}
+
+      {showForm && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+          <div className="bg-white p-6 rounded-md shadow-md">
+            <button
+              onClick={() => setShowForm(false)}
+              className="mb-4 py-2 px-4 bg-red-500 text-white rounded-full hover:bg-red-600"
+            >
+              Close
+            </button>
+            <PasswordForm
+              title={title}
+              url={url}
+              email={email}
+              username={username}
+              password={password}
+              showPassword={showPassword}
+              editMode={editMode}
+              handleInputChange={handleInputChange}
+              handleAddPassword={handleAddPassword}
+              togglePasswordVisibility={togglePasswordVisibility}
+              setPassword={setPassword}
+            />
+          </div>
+        </div>
       )}
     </div>
   );
