@@ -1,30 +1,50 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 const PasswordItem = ({ pw, handleEditPassword, confirmDeletePassword }) => {
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+
+  const togglePasswordVisibility = () => {
+    setIsPasswordVisible(!isPasswordVisible);
+  };
+
+  const copyToClipboard = (text) => {
+    navigator.clipboard.writeText(text);
+    alert('Copied to clipboard!');
+  };
+
   return (
-    <li className="p-4 bg-background-800 rounded-md shadow-md">
-      <div className="flex justify-between items-center">
-        <div>
-          <strong className="text-xl">{pw.title}</strong>
-          <p>{pw.url}</p>
-          <p>{pw.email}</p>
-          <p>{pw.username}</p>
-          <p>{pw.password}</p>
-        </div>
-        <div className="space-x-2">
-          <button
-            onClick={() => handleEditPassword(pw)}
-            className="py-2 px-4 bg-secondary text-white rounded-md hover:bg-secondary-dark"
-          >
-            Edit
-          </button>
-          <button
-            onClick={() => confirmDeletePassword(pw.id)}
-            className="py-2 px-4 bg-red-500 text-white rounded-md hover:bg-red-600"
-          >
-            Delete
-          </button>
-        </div>
+    <li className="grid grid-cols-4 gap-4 p-4 bg-background-800 rounded-md shadow-md">
+      <div className="flex justify-center items-center">
+        <strong className="text-xl text-text">{pw.title}</strong>
+      </div>
+      <div className="flex justify-center items-center space-x-2">
+        <p onClick={() => copyToClipboard(pw.email)} className="cursor-pointer text-text hover:underline">
+          {pw.email}
+        </p>
+        <span onClick={() => copyToClipboard(pw.email)} className="cursor-pointer">📋</span>
+      </div>
+      <div className="flex justify-center items-center space-x-2">
+        <p onClick={() => copyToClipboard(pw.password)} className="cursor-pointer text-text hover:underline">
+          {isPasswordVisible ? pw.password : '********'}
+        </p>
+        <button onClick={togglePasswordVisibility} className="text-sm text-primary">
+          {isPasswordVisible ? 'Hide' : 'Show'}
+        </button>
+        <span onClick={() => copyToClipboard(pw.password)} className="cursor-pointer">📋</span>
+      </div>
+      <div className="flex justify-center items-center space-x-2">
+        <button
+          onClick={() => handleEditPassword(pw)}
+          className="py-2 px-4 bg-secondary text-white rounded-md hover:bg-secondary-dark"
+        >
+          Edit
+        </button>
+        <button
+          onClick={() => confirmDeletePassword(pw.id)}
+          className="py-2 px-4 bg-red-500 text-white rounded-md hover:bg-red-600"
+        >
+          Delete
+        </button>
       </div>
     </li>
   );
