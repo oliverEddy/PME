@@ -7,7 +7,7 @@ import DeleteConfirmation from '../components/DeleteConfirmation';
 
 const Passwords = () => {
   const [passwords, setPasswords] = useState([]);
-  const [showForm, setShowForm] = useState(false); // State for showing the form
+  const [showForm, setShowForm] = useState(false);
   const [title, setTitle] = useState('');
   const [url, setUrl] = useState('');
   const [email, setEmail] = useState('');
@@ -17,9 +17,9 @@ const Passwords = () => {
   const [editPasswordId, setEditPasswordId] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [showPassword, setShowPassword] = useState(false); // Manage password visibility
-  const [passwordToDelete, setPasswordToDelete] = useState(null); // Manage password to delete
-  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false); // Manage delete confirmation dialog
+  const [showPassword, setShowPassword] = useState(false);
+  const [passwordToDelete, setPasswordToDelete] = useState(null);
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
 
   useEffect(() => {
     const fetchPasswords = async () => {
@@ -84,12 +84,10 @@ const Passwords = () => {
     setError(null);
     try {
       if (editMode) {
-        // Update existing password
         await updatePassword(editPasswordId, { title, url, email, username, password });
         setEditMode(false);
         setEditPasswordId('');
       } else {
-        // Add new password
         const passwordData = {
           title,
           url,
@@ -108,7 +106,7 @@ const Passwords = () => {
       setError('Failed to add/edit password. Please try again.');
     } finally {
       setLoading(false);
-      setShowForm(false); // Close form after submission
+      setShowForm(false);
     }
   };
 
@@ -120,12 +118,12 @@ const Passwords = () => {
     setPassword(pw.password);
     setEditMode(true);
     setEditPasswordId(pw.id);
-    setShowForm(true); // Open the form with the selected password for editing
+    setShowForm(true);
   };
 
   const confirmDeletePassword = (passwordId) => {
     setPasswordToDelete(passwordId);
-    setShowDeleteConfirmation(true); // Show the confirmation dialog
+    setShowDeleteConfirmation(true);
   };
 
   const handleDeletePassword = async () => {
@@ -135,8 +133,8 @@ const Passwords = () => {
       await deletePassword(passwordToDelete);
       const updatedPasswords = passwords.filter(pw => pw.id !== passwordToDelete);
       setPasswords(updatedPasswords);
-      setShowDeleteConfirmation(false); // Hide confirmation dialog
-      setShowForm(false); // Close the form after deletion
+      setShowDeleteConfirmation(false);
+      setShowForm(false);
     } catch (error) {
       console.error('Error deleting password:', error);
       setError('Failed to delete password. Please try again.');
@@ -146,7 +144,7 @@ const Passwords = () => {
   };
 
   const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword); // Toggle the state to show or hide the password
+    setShowPassword(!showPassword);
   };
 
   return (
@@ -154,7 +152,7 @@ const Passwords = () => {
       <h2 className="text-4xl font-bold mb-6">Passwords</h2>
       <button
         onClick={() => {
-          resetFormState(); // Reset the form state before showing the form
+          resetFormState();
           setShowForm(true);
         }}
         className="mb-4 py-2 px-4 bg-primary text-white rounded-full hover:bg-primary-dark"
@@ -194,14 +192,9 @@ const Passwords = () => {
               handleAddPassword={handleAddPassword}
               togglePasswordVisibility={togglePasswordVisibility}
               setPassword={setPassword}
-              confirmDeletePassword={confirmDeletePassword} // Pass down delete function
+              confirmDeletePassword={confirmDeletePassword}
+              setShowForm={setShowForm} // Pass down the setShowForm function
             />
-            <button
-              onClick={() => setShowForm(false)}
-              className="mt-4 py-2 px-4 bg-red-500 text-white rounded-full hover:bg-red-600"
-            >
-              Close
-            </button>
           </div>
         </div>
       )}

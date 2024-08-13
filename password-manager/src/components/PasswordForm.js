@@ -14,9 +14,17 @@ const PasswordForm = ({
   togglePasswordVisibility,
   setPassword,
   confirmDeletePassword,
+  setShowForm, // Accept the setShowForm function as a prop
 }) => {
   return (
-    <form onSubmit={handleAddPassword} className="w-full max-w-lg space-y-4">
+    <form onSubmit={handleAddPassword} className="w-full max-w-lg space-y-4 relative">
+      <button
+        type="button"
+        onClick={() => setShowForm(false)} // Use the setShowForm function to close the form
+        className="absolute top-2 left-2 py-1 px-3 border border-red-500 text-red-500 rounded-full hover:bg-red-100"
+      >
+        Close
+      </button>
       <input
         type="text"
         name="title"
