@@ -18,7 +18,7 @@ const Passwords = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [showPassword, setShowPassword] = useState(false); // Manage password visibility
-  const [ setPasswordToDelete] = useState(null); // Manage password to delete
+  const [ passwordToDelete, setPasswordToDelete] = useState(null); // Manage password to delete
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false); // Manage delete confirmation dialog
 
   useEffect(() => {
