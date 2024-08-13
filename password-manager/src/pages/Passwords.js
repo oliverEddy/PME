@@ -18,7 +18,7 @@ const Passwords = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [showPassword, setShowPassword] = useState(false); // Manage password visibility
-  const [ passwordToDelete, setPasswordToDelete] = useState(null); // Manage password to delete
+  const [passwordToDelete, setPasswordToDelete] = useState(null); // Manage password to delete
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false); // Manage delete confirmation dialog
 
   useEffect(() => {
@@ -40,6 +40,16 @@ const Passwords = () => {
 
     fetchPasswords();
   }, []);
+
+  const resetFormState = () => {
+    setTitle('');
+    setUrl('');
+    setEmail('');
+    setUsername('');
+    setPassword('');
+    setEditMode(false);
+    setEditPasswordId('');
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -90,11 +100,7 @@ const Passwords = () => {
         };
         await addPassword(passwordData);
       }
-      setTitle('');
-      setUrl('');
-      setEmail('');
-      setUsername('');
-      setPassword('');
+      resetFormState();
       const fetchedPasswords = await getPasswordsByUser(auth.currentUser.uid);
       setPasswords(fetchedPasswords);
     } catch (error) {
@@ -126,8 +132,8 @@ const Passwords = () => {
     setLoading(true);
     setError(null);
     try {
-      await deletePassword(editPasswordId);
-      const updatedPasswords = passwords.filter(pw => pw.id !== editPasswordId);
+      await deletePassword(passwordToDelete);
+      const updatedPasswords = passwords.filter(pw => pw.id !== passwordToDelete);
       setPasswords(updatedPasswords);
       setShowDeleteConfirmation(false); // Hide confirmation dialog
       setShowForm(false); // Close the form after deletion
@@ -147,7 +153,10 @@ const Passwords = () => {
     <div className="min-h-screen flex flex-col items-center bg-background text-text p-6 relative">
       <h2 className="text-4xl font-bold mb-6">Passwords</h2>
       <button
-        onClick={() => setShowForm(true)}
+        onClick={() => {
+          resetFormState(); // Reset the form state before showing the form
+          setShowForm(true);
+        }}
         className="mb-4 py-2 px-4 bg-primary text-white rounded-full hover:bg-primary-dark"
       >
         + Add Password
