@@ -17,14 +17,17 @@ const PasswordForm = ({
   setShowForm, // Accept the setShowForm function as a prop
 }) => {
   return (
-    <form onSubmit={handleAddPassword} className="w-full max-w-lg space-y-4 relative">
-      <button
-        type="button"
-        onClick={() => setShowForm(false)} // Use the setShowForm function to close the form
-        className="absolute top-2 left-2 py-1 px-3 border border-red-500 text-red-500 rounded-full hover:bg-red-100"
-      >
-        Close
-      </button>
+    <form onSubmit={handleAddPassword} className="w-full max-w-lg space-y-4">
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-xl font-semibold">{editMode ? 'Edit Password' : 'Add Password'}</h2>
+        <button
+          type="button"
+          onClick={() => setShowForm(false)} // Use the setShowForm function to close the form
+          className="py-1 px-3 border border-red-500 text-red-500 rounded-full hover:bg-red-100"
+        >
+          Close
+        </button>
+      </div>
       <input
         type="text"
         name="title"
@@ -78,9 +81,9 @@ const PasswordForm = ({
           <button
             type="button"
             onClick={confirmDeletePassword}
-            className="w-full py-3 bg-red-500 text-white rounded-md hover:bg-red-600"
+            className="ml-4 py-3 px-4 bg-red-500 text-white rounded-md hover:bg-red-600"
           >
-            Delete Password
+            Delete 
           </button>
         )}
       </div>
