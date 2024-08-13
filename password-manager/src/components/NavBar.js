@@ -24,14 +24,6 @@ const NavBar = () => {
         </Link>
         <ul className="flex space-x-4 items-center">
           <li>
-            <button
-              onClick={handleLogout}
-              className="py-2 px-4 bg-secondary text-white rounded-md hover:bg-secondary-dark"
-            >
-              Logout
-            </button>
-          </li>
-          <li>
             <Link to="/passwords" className="hover:text-accent">
               Passwords
             </Link>
@@ -40,6 +32,14 @@ const NavBar = () => {
             <Link to="/account" className="hover:text-accent">
               Account
             </Link>
+          </li>
+          <li>
+            <button
+              onClick={handleLogout}
+              className="py-2 px-4 bg-secondary text-white rounded-md hover:bg-secondary-dark"
+            >
+              Logout
+            </button>
           </li>
         </ul>
       </div>
