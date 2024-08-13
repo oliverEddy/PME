@@ -18,7 +18,7 @@ const Passwords = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [showPassword, setShowPassword] = useState(false); // Manage password visibility
-  const [passwordToDelete, setPasswordToDelete] = useState(null); // Manage password to delete
+  const [ setPasswordToDelete] = useState(null); // Manage password to delete
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false); // Manage delete confirmation dialog
 
   useEffect(() => {
@@ -126,10 +126,11 @@ const Passwords = () => {
     setLoading(true);
     setError(null);
     try {
-      await deletePassword(passwordToDelete);
-      const updatedPasswords = passwords.filter(pw => pw.id !== passwordToDelete);
+      await deletePassword(editPasswordId);
+      const updatedPasswords = passwords.filter(pw => pw.id !== editPasswordId);
       setPasswords(updatedPasswords);
       setShowDeleteConfirmation(false); // Hide confirmation dialog
+      setShowForm(false); // Close the form after deletion
     } catch (error) {
       console.error('Error deleting password:', error);
       setError('Failed to delete password. Please try again.');
@@ -143,7 +144,7 @@ const Passwords = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center bg-background text-text p-6">
+    <div className="min-h-screen flex flex-col items-center bg-background text-text p-6 relative">
       <h2 className="text-4xl font-bold mb-6">Passwords</h2>
       <button
         onClick={() => setShowForm(true)}
@@ -157,26 +158,21 @@ const Passwords = () => {
         <PasswordList
           passwords={passwords}
           handleEditPassword={handleEditPassword}
-          confirmDeletePassword={confirmDeletePassword}
         />
       </div>
 
       {showDeleteConfirmation && (
-        <DeleteConfirmation
-          handleDeletePassword={handleDeletePassword}
-          setShowDeleteConfirmation={setShowDeleteConfirmation}
-        />
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+          <DeleteConfirmation
+            handleDeletePassword={handleDeletePassword}
+            setShowDeleteConfirmation={setShowDeleteConfirmation}
+          />
+        </div>
       )}
 
       {showForm && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-40">
           <div className="bg-white p-6 rounded-md shadow-md">
-            <button
-              onClick={() => setShowForm(false)}
-              className="mb-4 py-2 px-4 bg-red-500 text-white rounded-full hover:bg-red-600"
-            >
-              Close
-            </button>
             <PasswordForm
               title={title}
               url={url}
@@ -189,7 +185,14 @@ const Passwords = () => {
               handleAddPassword={handleAddPassword}
               togglePasswordVisibility={togglePasswordVisibility}
               setPassword={setPassword}
+              confirmDeletePassword={confirmDeletePassword} // Pass down delete function
             />
+            <button
+              onClick={() => setShowForm(false)}
+              className="mt-4 py-2 px-4 bg-red-500 text-white rounded-full hover:bg-red-600"
+            >
+              Close
+            </button>
           </div>
         </div>
       )}

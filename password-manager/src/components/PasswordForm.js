@@ -13,6 +13,7 @@ const PasswordForm = ({
   handleAddPassword,
   togglePasswordVisibility,
   setPassword,
+  confirmDeletePassword,
 }) => {
   return (
     <form onSubmit={handleAddPassword} className="w-full max-w-lg space-y-4">
@@ -58,12 +59,23 @@ const PasswordForm = ({
         {showPassword ? 'Hide Password' : 'Show Password'}
       </button>
       <GeneratePassword setPassword={setPassword} />
-      <button
-        type="submit"
-        className="w-full py-3 bg-primary text-white rounded-md hover:bg-primary-dark"
-      >
-        {editMode ? 'Update Password' : 'Add Password'}
-      </button>
+      <div className="flex justify-between">
+        <button
+          type="submit"
+          className="w-full py-3 bg-primary text-white rounded-md hover:bg-primary-dark"
+        >
+          {editMode ? 'Update Password' : 'Add Password'}
+        </button>
+        {editMode && (
+          <button
+            type="button"
+            onClick={confirmDeletePassword}
+            className="w-full py-3 bg-red-500 text-white rounded-md hover:bg-red-600"
+          >
+            Delete Password
+          </button>
+        )}
+      </div>
     </form>
   );
 };
