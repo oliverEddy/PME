@@ -1,3 +1,5 @@
+// Passwords.js
+
 import React, { useState, useEffect } from 'react';
 import { auth } from '../firebase';
 import { addPassword, getPasswordsByUser, deletePassword, updatePassword } from '../passwordService';
@@ -7,6 +9,7 @@ import DeleteConfirmation from '../components/DeleteConfirmation';
 
 const Passwords = () => {
   const [passwords, setPasswords] = useState([]);
+  const [showForm, setShowForm] = useState(false);
   const [title, setTitle] = useState('');
   const [url, setUrl] = useState('');
   const [email, setEmail] = useState('');
@@ -16,9 +19,9 @@ const Passwords = () => {
   const [editPasswordId, setEditPasswordId] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [showPassword, setShowPassword] = useState(false); // State to manage password visibility
-  const [passwordToDelete, setPasswordToDelete] = useState(null); // State to manage password to delete
-  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false); // State to manage delete confirmation dialog
+  const [showPassword, setShowPassword] = useState(false);
+  const [passwordToDelete, setPasswordToDelete] = useState(null);
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
 
   useEffect(() => {
     const fetchPasswords = async () => {
@@ -39,6 +42,16 @@ const Passwords = () => {
 
     fetchPasswords();
   }, []);
+
+  const resetFormState = () => {
+    setTitle('');
+    setUrl('');
+    setEmail('');
+    setUsername('');
+    setPassword('');
+    setEditMode(false);
+    setEditPasswordId('');
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -73,12 +86,10 @@ const Passwords = () => {
     setError(null);
     try {
       if (editMode) {
-        // Update existing password
         await updatePassword(editPasswordId, { title, url, email, username, password });
         setEditMode(false);
         setEditPasswordId('');
       } else {
-        // Add new password
         const passwordData = {
           title,
           url,
@@ -89,11 +100,7 @@ const Passwords = () => {
         };
         await addPassword(passwordData);
       }
-      setTitle('');
-      setUrl('');
-      setEmail('');
-      setUsername('');
-      setPassword('');
+      resetFormState();
       const fetchedPasswords = await getPasswordsByUser(auth.currentUser.uid);
       setPasswords(fetchedPasswords);
     } catch (error) {
@@ -101,28 +108,8 @@ const Passwords = () => {
       setError('Failed to add/edit password. Please try again.');
     } finally {
       setLoading(false);
+      setShowForm(false);
     }
-  };
-
-  const handleDeletePassword = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      await deletePassword(passwordToDelete);
-      const updatedPasswords = passwords.filter(pw => pw.id !== passwordToDelete);
-      setPasswords(updatedPasswords);
-      setShowDeleteConfirmation(false); // Hide confirmation dialog
-    } catch (error) {
-      console.error('Error deleting password:', error);
-      setError('Failed to delete password. Please try again.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const confirmDeletePassword = (passwordId) => {
-    setPasswordToDelete(passwordId);
-    setShowDeleteConfirmation(true);
   };
 
   const handleEditPassword = (pw) => {
@@ -133,30 +120,49 @@ const Passwords = () => {
     setPassword(pw.password);
     setEditMode(true);
     setEditPasswordId(pw.id);
+    setShowForm(true);
+  };
+
+  const confirmDeletePassword = (passwordId) => {
+    setPasswordToDelete(passwordId);
+    setShowDeleteConfirmation(true);
+  };
+
+  const handleDeletePassword = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      await deletePassword(passwordToDelete); // Ensure this is a valid ID
+      const updatedPasswords = passwords.filter(pw => pw.id !== passwordToDelete);
+      setPasswords(updatedPasswords);
+      setShowDeleteConfirmation(false);
+      setShowForm(false);
+    } catch (error) {
+      console.error('Error deleting password:', error);
+      setError('Failed to delete password. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword); // Toggle the state to show or hide the password
+    setShowPassword(!showPassword);
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center bg-background text-text p-6">
+    <div className="min-h-screen flex flex-col items-center bg-background text-text p-6 relative">
       <h2 className="text-4xl font-bold mb-6">Passwords</h2>
+      <button
+        onClick={() => {
+          resetFormState();
+          setShowForm(true);
+        }}
+        className="mb-4 py-2 px-4 bg-primary text-white rounded-full hover:bg-primary-dark"
+      >
+        + Add Password
+      </button>
       {loading && <p>Loading...</p>}
       {error && <p className="text-red-500">{error}</p>}
-      <PasswordForm
-        title={title}
-        url={url}
-        email={email}
-        username={username}
-        password={password}
-        showPassword={showPassword}
-        editMode={editMode}
-        handleInputChange={handleInputChange}
-        handleAddPassword={handleAddPassword}
-        togglePasswordVisibility={togglePasswordVisibility}
-        setPassword={setPassword}
-      />
       <div className="w-full max-w-4xl mt-8">
         <PasswordList
           passwords={passwords}
@@ -166,10 +172,35 @@ const Passwords = () => {
       </div>
 
       {showDeleteConfirmation && (
-        <DeleteConfirmation
-          handleDeletePassword={handleDeletePassword}
-          setShowDeleteConfirmation={setShowDeleteConfirmation}
-        />
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+          <DeleteConfirmation
+            handleDeletePassword={handleDeletePassword}
+            setShowDeleteConfirmation={setShowDeleteConfirmation}
+          />
+        </div>
+      )}
+
+      {showForm && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-40">
+          <div className="bg-white p-6 rounded-md shadow-md">
+            <PasswordForm
+              title={title}
+              url={url}
+              email={email}
+              username={username}
+              password={password}
+              showPassword={showPassword}
+              editMode={editMode}
+              handleInputChange={handleInputChange}
+              handleAddPassword={handleAddPassword}
+              togglePasswordVisibility={togglePasswordVisibility}
+              setPassword={setPassword}
+              confirmDeletePassword={confirmDeletePassword}
+              setShowForm={setShowForm}
+              editPasswordId={editPasswordId} // Pass the correct ID
+            />
+          </div>
+        </div>
       )}
     </div>
   );
