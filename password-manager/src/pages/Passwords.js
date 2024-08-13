@@ -1,3 +1,5 @@
+// Passwords.js
+
 import React, { useState, useEffect } from 'react';
 import { auth } from '../firebase';
 import { addPassword, getPasswordsByUser, deletePassword, updatePassword } from '../passwordService';
@@ -130,7 +132,7 @@ const Passwords = () => {
     setLoading(true);
     setError(null);
     try {
-      await deletePassword(passwordToDelete);
+      await deletePassword(passwordToDelete); // Ensure this is a valid ID
       const updatedPasswords = passwords.filter(pw => pw.id !== passwordToDelete);
       setPasswords(updatedPasswords);
       setShowDeleteConfirmation(false);
@@ -165,6 +167,7 @@ const Passwords = () => {
         <PasswordList
           passwords={passwords}
           handleEditPassword={handleEditPassword}
+          confirmDeletePassword={confirmDeletePassword}
         />
       </div>
 
@@ -193,7 +196,8 @@ const Passwords = () => {
               togglePasswordVisibility={togglePasswordVisibility}
               setPassword={setPassword}
               confirmDeletePassword={confirmDeletePassword}
-              setShowForm={setShowForm} // Pass down the setShowForm function
+              setShowForm={setShowForm}
+              editPasswordId={editPasswordId} // Pass the correct ID
             />
           </div>
         </div>

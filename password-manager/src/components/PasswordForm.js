@@ -1,3 +1,5 @@
+// PasswordForm.js
+
 import React from 'react';
 import GeneratePassword from './GeneratePassword';
 
@@ -14,7 +16,8 @@ const PasswordForm = ({
   togglePasswordVisibility,
   setPassword,
   confirmDeletePassword,
-  setShowForm, // Accept the setShowForm function as a prop
+  setShowForm,
+  editPasswordId, // Accept the editPasswordId as a prop
 }) => {
   return (
     <form onSubmit={handleAddPassword} className="w-full max-w-lg space-y-4">
@@ -22,7 +25,7 @@ const PasswordForm = ({
         <h2 className="text-xl font-semibold">{editMode ? 'Edit Password' : 'Add Password'}</h2>
         <button
           type="button"
-          onClick={() => setShowForm(false)} // Use the setShowForm function to close the form
+          onClick={() => setShowForm(false)} 
           className="py-1 px-3 border border-red-500 text-red-500 rounded-full hover:bg-red-100"
         >
           Close
@@ -80,7 +83,7 @@ const PasswordForm = ({
         {editMode && (
           <button
             type="button"
-            onClick={confirmDeletePassword}
+            onClick={() => confirmDeletePassword(editPasswordId)} // Call with the correct ID
             className="ml-4 py-3 px-4 bg-red-500 text-white rounded-md hover:bg-red-600"
           >
             Delete 
