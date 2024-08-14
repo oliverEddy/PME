@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 
-const PasswordItem = ({ pw, handleEditPassword, confirmDeletePassword }) => {
+const PasswordItem = ({ pw, handleEditPassword }) => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
   const togglePasswordVisibility = () => {
@@ -38,12 +38,6 @@ const PasswordItem = ({ pw, handleEditPassword, confirmDeletePassword }) => {
           className="py-2 px-4 bg-secondary text-white rounded-md hover:bg-secondary-dark"
         >
           Edit
-        </button>
-        <button
-          onClick={() => confirmDeletePassword(pw.id)}
-          className="py-2 px-4 bg-red-500 text-white rounded-md hover:bg-red-600"
-        >
-          Delete
         </button>
       </div>
     </li>
