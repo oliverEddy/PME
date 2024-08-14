@@ -4,14 +4,16 @@ import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 
 const PasswordItem = ({ pw, handleEditPassword }) => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [copiedText, setCopiedText] = useState('');
 
   const togglePasswordVisibility = () => {
     setIsPasswordVisible(!isPasswordVisible);
   };
 
-  const copyToClipboard = (text) => {
+  const copyToClipboard = (text, field) => {
     navigator.clipboard.writeText(text);
-    alert('Copied to clipboard!');
+    setCopiedText(field);
+    setTimeout(() => setCopiedText(''), 2000); // Reset copied text after 2 seconds
   };
 
   return (
@@ -20,15 +22,21 @@ const PasswordItem = ({ pw, handleEditPassword }) => {
         <strong className="text-xl text-text">{pw.title}</strong>
       </div>
       <div className="flex justify-center items-center">
-        <p onClick={() => copyToClipboard(pw.email)} className="cursor-pointer text-text hover:underline">
-          {pw.email}
+        <p 
+          onClick={() => copyToClipboard(pw.email, 'email')} 
+          className="cursor-pointer text-text hover:underline"
+        >
+          {copiedText === 'email' ? 'Copied!' : pw.email}
         </p>
       </div>
       <div className="flex justify-center items-center space-x-2">
-        <p onClick={() => copyToClipboard(pw.password)} className="cursor-pointer text-text hover:underline">
-          {isPasswordVisible ? pw.password : '********'}
+        <p 
+          onClick={() => copyToClipboard(pw.password, 'password')} 
+          className="cursor-pointer text-text hover:underline"
+        >
+          {copiedText === 'password' ? 'Copied!' : (isPasswordVisible ? pw.password : '********')}
         </p>
-        <button onClick={togglePasswordVisibility} className="text-primary">
+        <button onClick={togglePasswordVisibility} className="text-primary cursor-pointer">
           <FontAwesomeIcon icon={isPasswordVisible ? faEye : faEyeSlash} />
         </button>
       </div>
