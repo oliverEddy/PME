@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 
-const PasswordItem = ({ pw, handleEditPassword }) => {
+const PasswordItem = ({ pw, handleEditPassword, confirmDeletePassword }) => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
   const togglePasswordVisibility = () => {
@@ -17,20 +19,18 @@ const PasswordItem = ({ pw, handleEditPassword }) => {
       <div className="flex justify-center items-center">
         <strong className="text-xl text-text">{pw.title}</strong>
       </div>
-      <div className="flex justify-center items-center space-x-2">
+      <div className="flex justify-center items-center">
         <p onClick={() => copyToClipboard(pw.email)} className="cursor-pointer text-text hover:underline">
           {pw.email}
         </p>
-        <span onClick={() => copyToClipboard(pw.email)} className="cursor-pointer">📋</span>
       </div>
       <div className="flex justify-center items-center space-x-2">
         <p onClick={() => copyToClipboard(pw.password)} className="cursor-pointer text-text hover:underline">
           {isPasswordVisible ? pw.password : '********'}
         </p>
-        <button onClick={togglePasswordVisibility} className="text-sm text-primary">
-          {isPasswordVisible ? 'Hide' : 'Show'}
+        <button onClick={togglePasswordVisibility} className="text-primary">
+          <FontAwesomeIcon icon={isPasswordVisible ? faEye : faEyeSlash} />
         </button>
-        <span onClick={() => copyToClipboard(pw.password)} className="cursor-pointer">📋</span>
       </div>
       <div className="flex justify-center items-center space-x-2">
         <button
@@ -38,6 +38,12 @@ const PasswordItem = ({ pw, handleEditPassword }) => {
           className="py-2 px-4 bg-secondary text-white rounded-md hover:bg-secondary-dark"
         >
           Edit
+        </button>
+        <button
+          onClick={() => confirmDeletePassword(pw.id)}
+          className="py-2 px-4 bg-red-500 text-white rounded-md hover:bg-red-600"
+        >
+          Delete
         </button>
       </div>
     </li>
